@@ -1,0 +1,53 @@
+from github import Github
+
+def generateUserList(filename):
+    Users = []
+    f = open(filename,'r')
+    for line in f:
+        data = line.split(",")
+        Users.append(data[0].strip())
+    f.close()
+    return Users
+
+def getCommitsForRepo(repo):
+    #empty dictionary of authors and commits and counts, counts first
+    commits = {}
+    try:
+        for c in repo.get_commits():
+	    try:
+                login = c.author.login
+                if login in commits:
+                    commits[login]['count'] = commits[login]['count'] + 1
+                    commits[login].text.append(c.get_comments())
+                else:
+                    commits[login] = 1
+                    commits[login] = dict()
+                    commits[login]['count'] = 1
+	    except:
+	        i = 1
+    except:
+        print("repo empty or has no commits")
+    return commits
+
+Users = generateUserList("/home/user/TestUsers.txt")
+print "Users : %s" %Users
+g = Github('Yogitha6','interOP@126')
+UserRepos = {}
+for user in Users:
+    for repo in g.get_user(user).get_repos():
+        if('CSCI3202' in repo.name):
+             UserRepos[user]=repo.name
+             commits = getCommitsForRepo(repo)
+             print "-----------------------------------------------"
+             print "==============================================="
+             print "commits are %s" %commits
+             for c in commits:
+                 print(c + " Count:" + str(commits[c]['count']))
+             commit_count = 1
+             for commit_my in repo.get_commits():
+                 print "Commit %d " %(commit_count)
+		 print commit_my.commit.author.date
+                 print "The modified files are: "
+                 for files in commit_my.files:
+                     print "%s" %files.filename
+                 commit_count = commit_count + 1
