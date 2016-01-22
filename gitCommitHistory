@@ -36,7 +36,7 @@ def getCommitsForRepo(repo):
 
 Users = generateUserList("/home/user/TestUsers.txt")
 print "Users : %s" %Users
-g = Github('Yogitha6','interOP@126')
+g = Github('Yogitha6','********')
 UserRepos = {}
 for user in Users:
     for repo in g.get_user(user).get_repos():
